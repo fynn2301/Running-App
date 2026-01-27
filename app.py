@@ -237,6 +237,9 @@ if not df.empty:
     df_weight = pd.DataFrame(weight_list)
     if not df_weight.empty:
         df_weight = df_weight.sort_values("date", ascending=True)
+        df_weekly = df_weight.set_index("date").resample("W").mean().reset_index()
+        df_weekly["date"] = df_weekly["date"] - pd.Timedelta(days=3)
+        df_weekly = df_weekly.dropna(subset=["weight"])
 
     # --- UI: TABELLE ---
     st.subheader("🏃‍♂️ Lauf-Übersicht")
@@ -402,6 +405,33 @@ if not df.empty:
             )
         )
 
+        fig_weight.add_trace(
+            go.Scatter(
+                x=df_weekly["date"],
+                y=df_weekly["weight"],
+                mode="lines+markers",
+                name="Wochenschnitt",
+                line=dict(color="#585858", width=2),  # Pink/Thicker for the trend
+                marker=dict(size=10, symbol="diamond"),
+                hovertemplate="%{y:.1f} kg (Schnitt)<extra></extra>",
+            )
+        )
+
+        start_date = df_weight["date"].min()
+        end_date = df_weight["date"].max()
+
+        # Generate all Mondays between start and end
+        # 'W-MON' ensures we only get Mondays
+        mondays = pd.date_range(start=start_date, end=end_date, freq="W-MON")
+
+        for monday in mondays:
+            fig_weight.add_vline(
+                x=monday.timestamp() * 1000,  # Plotly uses ms for timestamps
+                line_width=1,
+                line_dash="dash",
+                line_color="rgba(150, 150, 150, 0.5)",  # Subtle gray
+            )
+
         # Independent Layout
         fig_weight.update_layout(
             height=400,  # Shorter height for single plot
@@ -415,7 +445,7 @@ if not df.empty:
         # OR leave it auto-scaled by removing update_xaxes below.
         first_weight = df_weight["date"].min()
         last_weight = df_weight["date"].max()
-        xmax_weight = last_weight + pd.Timedelta(days=2)
+        xmax_weight = last_weight + pd.Timedelta(days=3)
         xmin_weight = first_weight - pd.Timedelta(days=1)
         fig_weight.update_xaxes(range=[xmin_weight, xmax_weight])
 

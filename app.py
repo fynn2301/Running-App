@@ -20,7 +20,7 @@ from plotly.subplots import make_subplots
 load_dotenv()
 
 # --- Konfiguration der Seite ---
-st.set_page_config(page_title="Garmin Stats", layout="centered")
+st.set_page_config(page_title="Garmin Stats", layout="wide")
 
 
 def get_prediction_df(client):
@@ -399,7 +399,8 @@ if not df.empty:
                 y=df_weight["weight"],
                 mode="lines+markers",
                 name="Gewicht",
-                line=dict(color="#9467bd", width=3),  # Purple
+                opacity=0.5,
+                line=dict(color="#686868", width=3),  # Purple
                 marker=dict(size=8),
                 hovertemplate="%{y:.1f} kg<extra></extra>",
             )
@@ -411,7 +412,7 @@ if not df.empty:
                 y=df_weekly["weight"],
                 mode="lines+markers",
                 name="Wochenschnitt",
-                line=dict(color="#585858", width=2),  # Pink/Thicker for the trend
+                line=dict(color="#07D7B4", width=2),  # Pink/Thicker for the trend
                 marker=dict(size=10, symbol="diamond"),
                 hovertemplate="%{y:.1f} kg (Schnitt)<extra></extra>",
             )

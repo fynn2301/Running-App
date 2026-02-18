@@ -247,7 +247,9 @@ if not df.empty:
         "Anzahl der letzten Läufe anzeigen:", min_value=1, value=3, step=1
     )
     df_limited = display_df.head(int(anzahl))
+    total_distance = df_limited["Distanz (km)"].sum()
     st.dataframe(df_limited, hide_index=True)
+    st.write(f"Gesamt Distanz: {total_distance:.2f} km")
 
     # --- UI: DOWNLOAD BUTTON ---
     csv = df_limited.to_csv(index=False, sep=";").encode("utf-8-sig")

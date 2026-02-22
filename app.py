@@ -50,7 +50,7 @@ def load_data():
         garmin.login()
 
         # 1. Activities
-        activities = garmin.get_activities(0, 50)
+        activities = garmin.get_activities(0, 400)
 
         # 2. VO2 Max Metrics
         today = date.today()

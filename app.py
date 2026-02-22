@@ -244,7 +244,7 @@ if not df.empty:
     # --- UI: TABELLE ---
     st.subheader("🏃‍♂️ Lauf-Übersicht")
     anzahl = st.number_input(
-        "Anzahl der letzten Läufe anzeigen:", min_value=1, value=3, step=1
+        "Anzahl der letzten Läufe anzeigen:", min_value=1, value=4, step=1
     )
     df_limited = display_df.head(int(anzahl))
     total_distance = df_limited["Distanz (km)"].sum()

@@ -40,7 +40,7 @@ def get_prediction_df(client):
 
 
 # --- Login & Datenabruf ---
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=10800)  # 10800 s = 3 h
 def load_data():
     EMAIL = os.getenv("EMAIL")
     PASSWORD = os.getenv("PASSWORT")
@@ -70,7 +70,8 @@ def load_data():
 
     except Exception as e:
         print(f"Error: {e}")
-        return None, None, None
+        st.write(f"Error: {e}")
+        return None, None, None, None
 
 
 # Ladebalken anzeigen

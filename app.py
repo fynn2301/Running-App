@@ -40,32 +40,37 @@ def get_prediction_df(client):
 
 
 # --- Login & Datenabruf ---
-@st.cache_data(ttl=10800)  # 10800 s = 3 h
+@st.cache_data(ttl=10800)
 def load_data():
     EMAIL = os.getenv("EMAIL")
     PASSWORD = os.getenv("PASSWORT")
 
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    TOKENSTORE = os.path.join(BASE_DIR, ".garmin_tokens")
+
     try:
         garmin = Garmin(EMAIL, PASSWORD)
-        garmin.login()
+        try:
+            garmin.garth.load(TOKENSTORE)
+            print("Erfolgreich mit gespeichertem Token verbunden!")
+        except Exception:
+            print("Kein Token gefunden. Logge regulär ein...")
+            garmin.login()
+            garmin.garth.dump(TOKENSTORE)
 
-        # 1. Activities
         activities = garmin.get_activities(0, 400)
 
         # 2. VO2 Max Metrics
         today = date.today()
-        # Ensure we use string format for the API
         today_str = str(today)
         url = f"/metrics-service/metrics/maxmet/daily/2025-10-01/{today_str}"
         vo2_data = garmin.connectapi(url)
 
-        # 3. NEW: Weight Data
-        # Using the same start date as your project
+        # 3. Weight Data
         weight_data = garmin.get_weigh_ins("2025-10-01", today_str)
 
         race_predictions = get_prediction_df(garmin)
 
-        # Return 4 values now
         return activities, vo2_data, race_predictions, weight_data
 
     except Exception as e:

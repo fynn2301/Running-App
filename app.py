@@ -49,14 +49,9 @@ def load_data():
     TOKENSTORE = os.path.join(BASE_DIR, ".garmin_tokens")
 
     try:
-        garmin = Garmin(EMAIL, PASSWORD)
-        try:
-            garmin.garth.load(TOKENSTORE)
-            print("Erfolgreich mit gespeichertem Token verbunden!")
-        except Exception:
-            print("Kein Token gefunden. Logge regulär ein...")
-            garmin.login()
-            garmin.garth.dump(TOKENSTORE)
+        garmin = Garmin(EMAIL, PASSWORD, prompt_mfa=True)
+        print("Kein Token gefunden. Logge regulär ein...")
+        garmin.login(TOKENSTORE)
 
         activities = garmin.get_activities(0, 400)
 
